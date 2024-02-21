@@ -1,0 +1,37 @@
+{
+    "colors": {
+        "default color": [
+            0.26666666666666666,
+            0.26666666666666666,
+            0.26666666666666666
+        ],
+        "incomplete color": [
+            0.36666666666666664,
+            0.26666666666666666,
+            0.26666666666666666
+        ],
+        "complete color": [
+            0.26666666666666666,
+            0.36666666666666664,
+            0.26666666666666666
+        ],
+        "dim": [
+            0.26666666666666666,
+            0.26666666666666666,
+            0.26666666666666666
+        ]
+    },
+    "icon names": {
+        "history_icon": "history_75.png"
+    },
+    "manage states": {
+        "copy html": true,
+        "reset on copy": true,
+        "reset title on copy": true,
+        "title is required": false,
+        "collapse gut check": false
+    },
+    "icons": {
+        "history_icon": "C:\\Users/afatka/Documents/maya/scripts\\P2\\icons\\history_75.png"
+    }
+}
