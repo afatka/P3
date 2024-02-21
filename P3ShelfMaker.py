@@ -8,7 +8,7 @@ import maya.cmds as cmds
 import maya.mel as mel
 import os.path
 
-class P2ShelfMaker(object):
+class P3ShelfMaker(object):
 
 	def __init__(self):
 		self.development = True
@@ -16,7 +16,7 @@ class P2ShelfMaker(object):
 	def __enter__(self):
 		# print('file: {}'.format(__file__))
 		# print('dirname: {}'.format(os.path.dirname(__file__)))
-		# print('icon path: {}'.format(os.path.join(os.path.dirname(__file__), 'icons', 'p2.png')))
+		# print('icon path: {}'.format(os.path.join(os.path.dirname(__file__), 'icons', 'P3.png')))
 		shelfTabLayout = mel.eval("global string $gShelfTopLevel; $temp = $gShelfTopLevel;") 
 		shelves = cmds.tabLayout(shelfTabLayout, query = True, childArray = True)
 		for shelf in shelves:
@@ -27,23 +27,23 @@ class P2ShelfMaker(object):
 		shelfBtns = cmds.shelfLayout(parentShelf, query = True, childArray = True)
 		for btn in shelfBtns:
 			cmd = cmds.shelfButton(btn, query = True, command = True)
-			if 'P2.P2(\'' in cmd:
+			if 'P3.P3(\'' in cmd:
 				icon_count += 1
 
 
 		xmlFile = cmds.fileDialog2(caption = 'Please select project xml', fileMode = 1, fileFilter = "XML (*.xml)")[0]
-		annotation = 'P2 - ' + str(xmlFile.rsplit('/', 1)[-1].rsplit('.',1)[0])
-		commandBlock = "import P2.P2 as P2\nimport maya.cmds as cmds\nP2GUI = P2.P2('{}')".format(xmlFile)
+		annotation = 'P3 - ' + str(xmlFile.rsplit('/', 1)[-1].rsplit('.',1)[0])
+		commandBlock = "import P3.P3 as P3\nimport maya.cmds as cmds\nP3GUI = P3.P3('{}')".format(xmlFile)
 		
 		print("icon count: {}".format(icon_count))
-		icon = os.path.join(os.path.dirname(__file__), 'icons', 'P2_{:02d}.png'.format(icon_count))
+		icon = os.path.join(os.path.dirname(__file__), 'icons', 'P3_{:02d}.png'.format(icon_count))
 		print("Icon: {}".format(icon))
 		if not os.path.isfile(icon):
-			icon = os.path.join(os.path.dirname(__file__), 'icons', 'P2.png')
+			icon = os.path.join(os.path.dirname(__file__), 'icons', 'P3.png')
 
 		cmds.shelfButton( parent = parentShelf, annotation = annotation, image1 =icon, command = commandBlock, sourceType = 'python' )
 
-		shelfDirectory = cmds.internalVar(userShelfDir = True) + 'shelf_P2'
+		shelfDirectory = cmds.internalVar(userShelfDir = True) + 'shelf_P3'
 		cmds.saveShelf(parentShelf, shelfDirectory)
 
 		return self
@@ -54,7 +54,7 @@ class P2ShelfMaker(object):
 		# for arg in args:
 		# 	self.log(arg)
 
-	def log(self, message, prefix = 'P2 Shelf Maker - '):
+	def log(self, message, prefix = 'P3 Shelf Maker - '):
 		if self.development:
 			print(('{}{}'.format(prefix, message)))
 

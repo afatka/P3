@@ -1,12 +1,12 @@
 """
- This class controls the main window of the P2 Grading System. It deals with tabbing the main sections as well as holding all the relavent information. 
+ This class controls the main window of the P3 Grading System. It deals with tabbing the main sections as well as holding all the relavent information. 
 
 """
-# P2 Version 1.0
+# P3 Version 1.0
 
 import maya.cmds as cmds
 import xml.etree.ElementTree as etree
-from P2 import cat_class as category_class
+from P3 import cat_class as category_class
 import os
 import errno
 import textwrap
@@ -18,34 +18,34 @@ import importlib
 importlib.reload(category_class)
 
 
-class P2(object):
+class P3(object):
 
 	def __init__(self, xmlFileLocation):
 
-		version = 2305.1
+		version = 2403
 		self.development = False
 
 		self.fail_message = [
-			('A P2 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
 			('You haven\'t completed the tool. Dummy', 'Ok'),
 			('Please finish grading before cycling to the next file', 'Ok'),
 			('What a dingus...You\'re not finished yet', 'Ok'),
 			('What did the error say?', 'I can read...'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
-			('A P2 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
+			('A P3 Section is not complete', 'Ok'),
 			]
 
 
@@ -100,13 +100,13 @@ class P2(object):
 			self.runAuto = False
 			autoLabel = 'RunAuto - Off'
 
-		#if P2 window exists delete it
-		if (cmds.window('P2Window', exists = True)):
-			cmds.deleteUI('P2Window')
+		#if P3 window exists delete it
+		if (cmds.window('P3Window', exists = True)):
+			cmds.deleteUI('P3Window')
 		# if preferences exist, delete them
 		if self.development:
-			if (cmds.windowPref('P2Window', exists = True)):
-				cmds.windowPref('P2Window', remove = True)
+			if (cmds.windowPref('P3Window', exists = True)):
+				cmds.windowPref('P3Window', remove = True)
 
 		# paths
 		self.directories = { "root_dir" : os.path.dirname(__file__)}
@@ -122,7 +122,7 @@ class P2(object):
 		# title field
 		self.titleFieldContent = ''
 
-		P2_window = cmds.window('P2Window', title = 'P2 (v.{1}): {0}'.format(windowTitle,version), iconName = 'P2', height = self.windowHeight)
+		P3_window = cmds.window('P3Window', title = 'P3 (v.{1}): {0}'.format(windowTitle,version), iconName = 'P3', height = self.windowHeight)
 		cmds.formLayout('rootLayout', numberOfDivisions = 100)
 		cmds.formLayout('topRow', numberOfDivisions = 100)
 		##This is the top button area
@@ -264,7 +264,7 @@ class P2(object):
 			cat.set_previous_category_button_command(self.view_previous_category)
 			cat.set_next_category_button_command(self.view_next_category)
 
-		cmds.showWindow( P2_window )
+		cmds.showWindow( P3_window )
 
 		self.enable();
 
@@ -847,7 +847,7 @@ class P2(object):
 		self.categoryGrades.setGradeValues(currentStatus)
 		self.log('grades should be set now')
 
-	def log(self, message, prefix = '.:P2 Grading System::'):
+	def log(self, message, prefix = '.:P3 Grading System::'):
 		"""
 		print stuff yo!
 		"""

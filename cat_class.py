@@ -1,5 +1,5 @@
 """
-This class is the most granular section of the P2 Grade Tool. 
+This class is the most granular section of the P3 Grade Tool. 
 
 It takes a subcategory from the xml and generates all GUI components for grading. 
 
