@@ -149,7 +149,7 @@ class P3(object):
 		cmds.menuItem('ResetOnCopy',parent = self.settings_menu, label = "Reset Categories", checkBox = self.configs['manage states']['reset on copy'], command = self.toggleResetOnCopy)
 		cmds.menuItem(parent = self.settings_menu, label = "Settings", divider = True)
 		cmds.menuItem('TitleisRequired',parent = self.settings_menu, label = "Title is Required", checkBox = self.configs['manage states']['title is required'], command = self.toggleTitleIsRequired)
-		cmds.menuItem('CollapseGutCheck', parent = self.settings_menu, label = "Collapse Gut Check on Set/Reset", checkBox = self.configs['manage states']['collapse gut check'], command = self.toggleCollapseGutCheck)
+		# cmds.menuItem('CollapseGutCheck', parent = self.settings_menu, label = "Collapse Gut Check on Set/Reset", checkBox = self.configs['manage states']['collapse gut check'], command = self.toggleCollapseGutCheck) # P3 Update comment out
 
 		cmds.menuItem(parent = self.settings_menu, divider = True)
 		cmds.menuItem(parent = self.settings_menu, divider = True)
@@ -191,7 +191,7 @@ class P3(object):
 
 		cmds.formLayout('bodyFormLayout', numberOfDivisions = 100)
 
-		self.gradeIntFormLayoutVar = cmds.formLayout('gradeIntFormLayout', numberOfDivisions = 100)
+		self.gradeIntFormLayoutVar = cmds.formLayout('gradeIntFormLayout', numberOfDivisions = 100, visible = False) # P3 update - visible = false
 
 		#set up the category Grade Totals
 		self.categoryGrades = GenerateCategoryGrades(self.xml_elementRoot, self.gradeIntFormLayoutVar)
@@ -292,7 +292,6 @@ class P3(object):
 
 	def get_tab_count(self):
 		return len(cmds.tabLayout(self.pgs_tabLayout, query = True, childArray = True))
-
 
 	def loadConfigsFromJson(self, *args):
 		try:
@@ -672,7 +671,96 @@ class P3(object):
 		pyperclip.copy(feedback)
 		cmds.warning("Text copied successfully.")
 
+	# generate feedback without any grade/math stuff - just custom comments no defaults
 	def generate_feedback(self, generate_with_HTML, *args):
+
+		gathered_grades = self.gatherGrades()
+		title = cmds.textField('titleField', query = True, text = True).strip()
+
+		grades_list = []
+		if generate_with_HTML: # There has to be a better way...?
+			# grades_list = ["<h2>{}: <i>{}%</i></h2>".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
+			if title != "":
+				grades_list.extend(["Grading for: <b>{}</b>".format(title)])
+			grades_list.extend(["<hr>\n"])
+		else:
+			# grades_list = ["{}: {}%".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
+			if title != "":
+				grades_list.extend(["Grading for: {}".format(title)])
+			grades_list.extend(["\n"])
+
+		for section in gathered_grades:
+
+			# section[0] is the category title
+			# section[1] is the category weight
+			# section[2] is highnotes
+			# section[3] is the category score
+			# section[4] is a list of the subcategories
+
+			# grades_list.extend(["section 0: {}".format(section[0])])
+			# grades_list.extend(["section 1: {}".format(section[1])])
+			# grades_list.extend(["section 2: {}".format(section[2])])
+			# grades_list.extend(["section 3: {}".format(section[3])])
+			# grades_list.extend(["section 4: {}".format(section[4])])
+
+			if section[0] == "grade_boxes_internal":
+				pass
+			else:
+				# category title and score
+				if generate_with_HTML:
+					grades_list.extend(["<h2>{}</h2>".format(section[0])])
+				else:
+					grades_list.extend(["{}".format(section[0])])
+
+				# highnotes
+				if section[2].strip() != "":
+
+					# highnote intro
+					try:
+						category_comment_text_intro = self.xml_elementDefaults.find('category_comments_intro').text
+						if category_comment_text_intro != None: 
+							grades_list.extend([x.strip() for x in category_comment_text_intro.split("\n")])
+					except AttributeError:
+						pass
+
+					# highnote comments
+					grades_list.extend(["{}".format(section[2])])
+
+				# subcategory sections
+				for subcat in section[4]:
+					# title and grade value
+					if generate_with_HTML:
+						grades_list.extend(["<b>{}:</b>".format(subcat["section_title"])])
+					else:
+						grades_list.extend(["{}:".format(subcat["section_title"])])
+
+					# comments
+					if subcat["comment_text"].strip() != "":
+
+						# comment intro
+						try:
+							comment_textIntro = self.xml_elementDefaults.find('comment_intro').text
+							if comment_textIntro != None: 
+								grades_list.extend([x.strip() for x in comment_textIntro.split("\n")])
+						except AttributeError:
+							pass
+
+						# add comments
+						grades_list.extend(subcat["comment_text"].split("\n"))
+
+					grades_list.extend([""])
+
+		# if generate_with_HTML:
+		# 	grades_list.extend(["<hr>"])
+		# else:
+		# 	grades_list.extend(["\n"])
+
+		# pyperclip.copy("\n".join(grades_list))
+		return "\n".join(grades_list)
+		# cmds.warning("Text copied successfully.")
+
+	# obsolete as of P3
+	def generate_feedback_P2(self, generate_with_HTML, *args):
 
 		gathered_grades = self.gatherGrades()
 		title = cmds.textField('titleField', query = True, text = True).strip()

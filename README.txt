@@ -1,8 +1,8 @@
 
-# P2 Install Notes
-# Place P2 into your scripts folder
+# P3 Install Notes
+# Place P3 into your scripts folder
 #
 # Within Maya run the following code as Python
 
-import P2.install
+import P3.install
 

@@ -76,7 +76,11 @@ class  SubcategoryGradeSection(object):
 		self.log('RMB: {}'.format(self.rmb))
 		
 		self.log('starting subcategory GUI')
-		self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, backgroundColor = self.configDict["colors"]['incomplete color'])
+		# self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, backgroundColor = self.configDict["colors"]['incomplete color'])
+		self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, 
+														 backgroundColor = self.configDict["colors"]['incomplete color'],
+														 visible = False) # P3 update - visible = false
+
 
 		seperatorReference = cmds.separator(style = 'in')
 
@@ -115,7 +119,9 @@ class  SubcategoryGradeSection(object):
 			)
 
 		self.log('radios created, starting comment frames')
-		self.subcat_comments_frame_layout = cmds.frameLayout( label='Comments', collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'], expandCommand = self.maintain_default_comment_visibility) 
+		# self.subcat_comments_frame_layout = cmds.frameLayout( label='Comments', collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'], expandCommand = self.maintain_default_comment_visibility) 
+		self.subcat_comments_frame_layout = cmds.frameLayout( label=self.title, collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'], expandCommand = self.maintain_default_comment_visibility) 
+
 
 		# self.default_comments_frameLayout = cmds.frameLayout( label='Default Comments', collapsable = True, collapse = True, backgroundColor = self.colors['dim']) 
 		self.default_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, visible = self.default_comment_is_visible, changeCommand = lambda *args: self.update_subcategory('default_comments_text', *args)) 
@@ -155,7 +161,7 @@ class  SubcategoryGradeSection(object):
 		# self.default_comments_frameLayout = cmds.frameLayout( label='Default Comments', collapsable = True, collapse = True, backgroundColor = self.colors['dim']) 
 		# self.default_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, changeCommand = lambda *args: self.update_subcategory('default_comments_text', *args)) 
 		# cmds.setParent('..')
-		cmds.button(label = "Toggle Default Comment Visibility", command = self.toggle_default_comments, backgroundColor = self.configDict["colors"]['dim'])
+		self.toggleDefaultCommentVisButton = cmds.button(label = "Toggle Default Comment Visibility", command = self.toggle_default_comments, backgroundColor = self.configDict["colors"]['dim'], visible = False) # P3 Update visible = false
 		cmds.setParent('..')
 
 		cmds.setParent('..')
@@ -176,6 +182,7 @@ class  SubcategoryGradeSection(object):
 		 	cmds.scrollField( self.default_comments, edit = True, visible = True)
 		else:
 		 	cmds.scrollField( self.default_comments, edit = True, visible = False)
+		 	cmds.button(self.toggleDefaultCommentVisButton, edit = True, visible = False) # P3 Update
 
 	def clear_comments(self, *args):
 		cmds.scrollField(self.comments_text_field, edit = True, text = '')
@@ -669,11 +676,13 @@ class MainCategoryGradeSection(object):
 		self.maincat_main_column_layout = cmds.formLayout(parent = self.mainCategoryRootScrollLayout, numberOfDivisions = 100, enable = False)
 
 		self.mainFrameLayout = cmds.frameLayout(label = 'Category Comments',collapsable = False, collapse = False, backgroundColor = self.colors['dim'])
-		if self.gutCheck == 'True':
-			self.log('running gut check GUI stuff')
-			self.gutCheckFrameLayout = cmds.frameLayout(label = 'Gut Check', collapsable = True, collapse = self.configDict['manage states']['collapse gut check'], backgroundColor = self.colors['dim'])
-			self.gutCheckWindowGo()
-			cmds.setParent(self.mainFrameLayout)
+
+		# P3 Update - comment out
+		# if self.gutCheck == 'True':
+		# 	self.log('running gut check GUI stuff')
+		# 	self.gutCheckFrameLayout = cmds.frameLayout(label = 'Gut Check', collapsable = True, collapse = self.configDict['manage states']['collapse gut check'], backgroundColor = self.colors['dim'])
+		# 	self.gutCheckWindowGo()
+		# 	cmds.setParent(self.mainFrameLayout)
 
 		self.highnote_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, changeCommand = lambda *args: self.update_maincategory('highnotes', *args)) 
 
@@ -1182,8 +1191,9 @@ class MainCategoryGradeSection(object):
 		# print('toggleCollapseGutCheck_state: {}'.format(self.configDict['manage states']['collapse gut check']))
 		# print("Category Title: {}".format(self.title))
 		
-		if self.gutCheck == 'True':
-			cmds.frameLayout(self.gutCheckFrameLayout, edit = True, collapse = self.configDict['manage states']['collapse gut check'])
+		# P3 Update - commented out
+		# if self.gutCheck == 'True':
+		# 	cmds.frameLayout(self.gutCheckFrameLayout, edit = True, collapse = self.configDict['manage states']['collapse gut check'])
 
 		for sub in self.subcategories:
 			sub.reset()
