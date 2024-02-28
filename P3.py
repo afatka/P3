@@ -61,7 +61,7 @@ class P3(object):
 		self.xml_elementDefaults = self.xml_elementRoot.find('defaults')
 		self.xml_elementMainCategories = self.xml_elementRoot.findall('category')
 
-		self.validateXML()
+		# self.validateXML()
 
 		# 5/3/23 get title validation information (Student Name field validation)
 		self.title_validation = self.xml_elementDefaults.find('title_field_validation')
@@ -91,14 +91,14 @@ class P3(object):
 		self.uiPadding = 2
 
 		self.outputModel = 'root'
-		if self.xml_elementDefaults.find('auto').text == 'True':
-			self.log('Auto Defaults: True')
-			self.runAuto = True
-			autoLabel = 'RunAuto - On'
-		else:
-			self.log('Auto Defaults: False')
-			self.runAuto = False
-			autoLabel = 'RunAuto - Off'
+		# if self.xml_elementDefaults.find('auto').text == 'True':
+		# 	self.log('Auto Defaults: True')
+		# 	self.runAuto = True
+		# 	autoLabel = 'RunAuto - On'
+		# else:
+		# 	self.log('Auto Defaults: False')
+		# 	self.runAuto = False
+		# 	autoLabel = 'RunAuto - Off'
 
 		#if P3 window exists delete it
 		if (cmds.window('P3Window', exists = True)):
@@ -127,21 +127,21 @@ class P3(object):
 		cmds.formLayout('topRow', numberOfDivisions = 100)
 		##This is the top button area
 
-		cmds.iconTextButton ('queueButton', style = "iconOnly", image1 = self.icons['history_icon'], enable = True)
-		# cmds.button ('copyFeedbackButton', label = "HTML Copy" , command = lambda x: self.finished_grading(True) )
+		iconbuttonsize = 32
+		cmds.iconTextButton ('queueButton', style = "iconOnly", image1 = self.icons['history_icon'], enable = True, width = iconbuttonsize, height = iconbuttonsize )
 		if self.configs['manage states']['copy html']:
 			cmds.button('copyFeedbackButton', label = "Copy HTML Text", command = lambda x: self.finished_grading(True))
 		else:
 			cmds.button('copyFeedbackButton', label = "Copy Plain Text", command =  lambda x: self.finished_grading(False))
-		cmds.textField('titleField', placeholderText = "Student Name", )
+		# cmds.textField('titleField', placeholderText = "Student Name", )
 
-		titleFieldMenu = cmds.popupMenu(parent = 'titleField', button = 3)
-		cmds.menuItem(parent = titleFieldMenu, label = 'Paste', command = self.pasteTitle)
-		cmds.menuItem(parent = titleFieldMenu, label = 'Trim Path', command = self.trimTitle)
-		cmds.menuItem(parent = titleFieldMenu, label = 'Clear', command = self.resetTitle)
-		cmds.menuItem(parent = titleFieldMenu, label = 'Validate Title', command = self.toggle_validate_title_field)
+		# titleFieldMenu = cmds.popupMenu(parent = 'titleField', button = 3)
+		# cmds.menuItem(parent = titleFieldMenu, label = 'Paste', command = self.pasteTitle)
+		# cmds.menuItem(parent = titleFieldMenu, label = 'Trim Path', command = self.trimTitle)
+		# cmds.menuItem(parent = titleFieldMenu, label = 'Clear', command = self.resetTitle)
+		# cmds.menuItem(parent = titleFieldMenu, label = 'Validate Title', command = self.toggle_validate_title_field)
 
-		self.settings_menu = cmds.popupMenu(parent = 'queueButton', button = 3)
+		self.settings_menu = cmds.popupMenu(parent = 'queueButton', button = 1)
 		cmds.menuItem(parent = self.settings_menu, label = "Reset Tool", command = self.resetTool)
 		cmds.menuItem(parent = self.settings_menu, label = 'Toggle HTML/Plain Text Copy', command = self.toggleCopy)
 		cmds.menuItem(parent = self.settings_menu, label = "On Copy", divider = True)
@@ -155,16 +155,16 @@ class P3(object):
 		cmds.menuItem(parent = self.settings_menu, divider = True)
 		cmds.menuItem(parent = self.settings_menu, label = "Reset All Configs to Defaults", command = self.resetConfigsToDefaults)
 
-		self.queue_menu = cmds.popupMenu(parent = 'queueButton', button = 1)
-		cmds.menuItem(parent = self.queue_menu, divider = True, dividerLabel = "Copy Recent")
+		# self.queue_menu = cmds.popupMenu(parent = 'queueButton', button = 1)
+		# cmds.menuItem(parent = self.queue_menu, divider = True, dividerLabel = "Copy Recent")
 
-		self.history_queue_items = [['1.',""], ['2.',""], ['3.',""], ['4.',""], ['5.',""]]
-		self.history_queue_menuItems = []
-		self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[0][0]))
-		self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[1][0]))
-		self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[2][0]))
-		self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[3][0]))
-		self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[4][0]))
+		# self.history_queue_items = [['1.',""], ['2.',""], ['3.',""], ['4.',""], ['5.',""]]
+		# self.history_queue_menuItems = []
+		# self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[0][0]))
+		# self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[1][0]))
+		# self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[2][0]))
+		# self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[3][0]))
+		# self.history_queue_menuItems.append(cmds.menuItem(parent = self.queue_menu, label = self.history_queue_items[4][0]))
 
 		##End top button area
 		cmds.setParent('topRow')
@@ -178,24 +178,23 @@ class P3(object):
 		centerHorizontalMargin = 10
 		centerVerticalMargin = 5
 
+		# cmds.formLayout( 'topRow', edit=True, 
+		#     attachForm=[('queueButton', 'top', topMostMargin), ('queueButton', 'left', leftMostMargin), 
+		#     			('copyFeedbackButton', 'top', topMostMargin), ('copyFeedbackButton', 'right', rightMostMargin),
+		#     			('titleField', 'bottom', bottomMostMargin), ('titleField', 'right', rightMostMargin)],
+		#     attachControl = [('copyFeedbackButton', 'left', centerHorizontalMargin, 'queueButton'),
+		#     				('titleField', 'left', centerHorizontalMargin, 'queueButton'), ('titleField', 'top', centerVerticalMargin, 'copyFeedbackButton')])
+
 		cmds.formLayout( 'topRow', edit=True, 
 		    attachForm=[('queueButton', 'top', topMostMargin), ('queueButton', 'left', leftMostMargin), 
 		    			('copyFeedbackButton', 'top', topMostMargin), ('copyFeedbackButton', 'right', rightMostMargin),
-		    			('titleField', 'bottom', bottomMostMargin), ('titleField', 'right', rightMostMargin)],
-		    attachControl = [('copyFeedbackButton', 'left', centerHorizontalMargin, 'queueButton'),
-		    				('titleField', 'left', centerHorizontalMargin, 'queueButton'), ('titleField', 'top', centerVerticalMargin, 'copyFeedbackButton')])
-
+		    			('copyFeedbackButton', 'bottom', bottomMostMargin)],
+		    attachControl = [('copyFeedbackButton', 'left', centerHorizontalMargin, 'queueButton')])
 
 		# attach top row layout to root layout
 		cmds.formLayout('rootLayout', edit = True, attachForm = [('topRow', 'top', 0), ('topRow', 'left', 0), ('topRow', 'right', 0)])
 
 		cmds.formLayout('bodyFormLayout', numberOfDivisions = 100)
-
-		self.gradeIntFormLayoutVar = cmds.formLayout('gradeIntFormLayout', numberOfDivisions = 100, visible = False) # P3 update - visible = false
-
-		#set up the category Grade Totals
-		self.categoryGrades = GenerateCategoryGrades(self.xml_elementRoot, self.gradeIntFormLayoutVar)
-		cmds.setParent('bodyFormLayout')
 
 		gradeSectionsFormLayoutVar = cmds.formLayout(numberOfDivisions = 100)
 
@@ -212,7 +211,7 @@ class P3(object):
 
 		#create main category sections
 		for category in self.xml_elementMainCategories:
-			self.mainCategories.append(category_class.MainCategoryGradeSection(category, self.xml_elementDefaults, self.Update_PGS_intFields, self.configs))
+			self.mainCategories.append(category_class.MainCategoryGradeSection(category, self.xml_elementDefaults, self.configs))
 			cmds.setParent(self.pgs_tabLayout)
 
 		#make all main categories children of the tab layout
@@ -239,13 +238,12 @@ class P3(object):
 		cmds.setParent('bodyFormLayout')
 
 		cmds.formLayout('bodyFormLayout', edit = True, attachForm = [
-			(self.gradeIntFormLayoutVar, 'top', self.uiPadding),
-			(self.gradeIntFormLayoutVar, 'left', self.uiPadding),
+			(gradeSectionsFormLayoutVar, 'top', self.uiPadding),
+			(gradeSectionsFormLayoutVar, 'left', self.uiPadding),
 			(gradeSectionsFormLayoutVar, 'top', self.uiPadding),
 			(gradeSectionsFormLayoutVar, 'right', self.uiPadding),
 			(gradeSectionsFormLayoutVar, 'bottom', self.uiPadding)
-			],
-			attachControl = [(gradeSectionsFormLayoutVar, 'left', self.uiPadding, self.gradeIntFormLayoutVar)])
+			])
 
 
 		cmds.setParent('..')#main column Layout
@@ -260,13 +258,13 @@ class P3(object):
 			])
 
 		# assign view category commands to buttons in categories
-		for cat in self.mainCategories:
-			cat.set_previous_category_button_command(self.view_previous_category)
-			cat.set_next_category_button_command(self.view_next_category)
+		# for cat in self.mainCategories:
+		# 	cat.set_previous_category_button_command(self.view_previous_category)
+		# 	cat.set_next_category_button_command(self.view_next_category)
 
 		cmds.showWindow( P3_window )
 
-		self.enable();
+		# self.enable();
 
 	def view_next_category(self, *args):
 		tab_count = self.get_tab_count()
@@ -375,8 +373,6 @@ class P3(object):
 
 		self.configs['icon names'] = {"history_icon" : "history_75.png"}
 
-		# self.configs['icons'] = {'history_icon' : os.path.join(self.directories['icon_dir'], self.configs['icon names']['history_icon'])}
-
 		self.configs['manage states'] = {'copy html' : True,
 										'reset on copy' : True,
 										'reset title on copy' : True,
@@ -449,115 +445,114 @@ class P3(object):
 
 		self.saveConfigToJson()
 
-	def validateXML(self):
-		self.log('Validate XML')
-		error_list = []
-		cat_weights = 0
-		eq = self.xml_elementDefaults.find('gradeEquation').text
-		self.log('equation: {}'.format(eq))
-		cats_to_validate = 0
-		for cat in self.xml_elementMainCategories:
+	# def validateXML(self):
+	# 	self.log('Validate XML')
+	# 	error_list = []
+	# 	cat_weights = 0
+	# 	eq = self.xml_elementDefaults.find('gradeEquation').text
+	# 	self.log('equation: {}'.format(eq))
+	# 	cats_to_validate = 0
+	# 	for cat in self.xml_elementMainCategories:
 
-			cat_title = cat.get('title')
-			if cat_title == None:
-				cat_title = cat.find('title').text
+	# 		cat_title = cat.get('title')
+	# 		if cat_title == None:
+	# 			cat_title = cat.find('title').text
 
-			cat_weight = cat.get('weight')
-			if cat_weight == None:
-				cat_weight = cat.find('weight').text
+	# 		cat_weight = cat.get('weight')
+	# 		if cat_weight == None:
+	# 			cat_weight = cat.find('weight').text
 
-			if eq.count(cat_title[:3]) != 1:
-				self.log('title: {}'.format(cat_title[:3]))
-				self.log('count: {}'.format(eq.count(cat_title[:3])))
-				error_list.append('{} \nnot present in equation exactly once.'.format(cat_title))
+	# 		if eq.count(cat_title[:3]) != 1:
+	# 			self.log('title: {}'.format(cat_title[:3]))
+	# 			self.log('count: {}'.format(eq.count(cat_title[:3])))
+	# 			error_list.append('{} \nnot present in equation exactly once.'.format(cat_title))
 
-			ignore_validation = cat.find('ignore_validation')
-			if ignore_validation != None:
-				if ignore_validation.text.lower() == 'true':
-					ignore_validation = True
-			else:
-				ignore_validation = False
+	# 		ignore_validation = cat.find('ignore_validation')
+	# 		if ignore_validation != None:
+	# 			if ignore_validation.text.lower() == 'true':
+	# 				ignore_validation = True
+	# 		else:
+	# 			ignore_validation = False
 
 			
-			if not ignore_validation:
-				cat_weights += float(cat_weight)
-				cats_to_validate += 1
-			else:
-				cmds.warning('Category: {} ignored in validation.'.format(cat_title))
+	# 		if not ignore_validation:
+	# 			cat_weights += float(cat_weight)
+	# 			cats_to_validate += 1
+	# 		else:
+	# 			cmds.warning('Category: {} ignored in validation.'.format(cat_title))
 
-			subcat_weights = 0
-			subs_to_validate = 0
-			for subcat in cat.findall('subcategory'):
+	# 		subcat_weights = 0
+	# 		subs_to_validate = 0
+	# 		for subcat in cat.findall('subcategory'):
 
-				sub_title = subcat.get('title')
-				if sub_title == None:
-					sub_title = subcat.find('title').text
+	# 			sub_title = subcat.get('title')
+	# 			if sub_title == None:
+	# 				sub_title = subcat.find('title').text
 
-				sub_weight = subcat.get('weight')
-				if sub_weight == None:
-					sub_weight = subcat.find('weight').text
+	# 			sub_weight = subcat.get('weight')
+	# 			if sub_weight == None:
+	# 				sub_weight = subcat.find('weight').text
 
 
-				ignore_validation = subcat.find('ignore_validation')
-				if ignore_validation != None:
-					if ignore_validation.text.lower() == 'true':
-						ignore_validation = True
-				else:
-					ignore_validation = False
+	# 			ignore_validation = subcat.find('ignore_validation')
+	# 			if ignore_validation != None:
+	# 				if ignore_validation.text.lower() == 'true':
+	# 					ignore_validation = True
+	# 			else:
+	# 				ignore_validation = False
 
-				if not ignore_validation:
-					subcat_weights += float(sub_weight)
-					subs_to_validate += 1
-				else:
-					cmds.warning('Subcategory: {} ignored in validation.'.format(sub_title))
+	# 			if not ignore_validation:
+	# 				subcat_weights += float(sub_weight)
+	# 				subs_to_validate += 1
+	# 			else:
+	# 				cmds.warning('Subcategory: {} ignored in validation.'.format(sub_title))
 					
-			self.log('total subcat weighting: {}'.format(subcat_weights))
+	# 		self.log('total subcat weighting: {}'.format(subcat_weights))
 
-			if (subcat_weights != 100) and (subs_to_validate != 0):
-				error_list.append('{} \nsubweights incorrect. Total weights: {}'.format(cat_title, subcat_weights))
-				cmds.warning('Subcategory weighting incorrect!\n{} total subcategory weighting: {}'.format(
-					cat_title, subcat_weights))
-				error_list.append('\n')
+	# 		if (subcat_weights != 100) and (subs_to_validate != 0):
+	# 			error_list.append('{} \nsubweights incorrect. Total weights: {}'.format(cat_title, subcat_weights))
+	# 			cmds.warning('Subcategory weighting incorrect!\n{} total subcategory weighting: {}'.format(
+	# 				cat_title, subcat_weights))
+	# 			error_list.append('\n')
 
-		for box in self.xml_elementRoot.findall('grade_box'):
-			self.log('box: {}'.format(box.get('title')))
-			if box.get('title') == 'Late':
-				if eq.count(box.get('title')) != 1:
-					error_list.append('{} Grade Box\nnot present in equation exactly once'.format(box.get('title')))
-			elif eq.count(box.get('title')[:3]) != 1:
-				error_list.append('{} Grade Box\nnot present in equation exactly once'.format(box.get('title')))
+	# 	for box in self.xml_elementRoot.findall('grade_box'):
+	# 		self.log('box: {}'.format(box.get('title')))
+	# 		if box.get('title') == 'Late':
+	# 			if eq.count(box.get('title')) != 1:
+	# 				error_list.append('{} Grade Box\nnot present in equation exactly once'.format(box.get('title')))
+	# 		elif eq.count(box.get('title')[:3]) != 1:
+	# 			error_list.append('{} Grade Box\nnot present in equation exactly once'.format(box.get('title')))
 
-		self.log('total cat weighting: {}'.format(cat_weights))
-		if (cat_weights != 100) and (cats_to_validate != 0): 
-			error_list.append('\nCategory weights incorrect. Total weights: {}'.format(cat_weights))
-			cmds.warning('Category Weighting Incorrect!\nTotal category weight: {}'.format(cat_weights))
+	# 	self.log('total cat weighting: {}'.format(cat_weights))
+	# 	if (cat_weights != 100) and (cats_to_validate != 0): 
+	# 		error_list.append('\nCategory weights incorrect. Total weights: {}'.format(cat_weights))
+	# 		cmds.warning('Category Weighting Incorrect!\nTotal category weight: {}'.format(cat_weights))
 
-		if len(error_list) >= 1:
-			self.log('len(error_list): {}'.format(len(error_list)))
-			self.log('error_list: {}'.format(error_list))
-			msg = ''
-			for i in error_list:
-				msg += '{}\n'.format(i)
+	# 	if len(error_list) >= 1:
+	# 		self.log('len(error_list): {}'.format(len(error_list)))
+	# 		self.log('error_list: {}'.format(error_list))
+	# 		msg = ''
+	# 		for i in error_list:
+	# 			msg += '{}\n'.format(i)
 
-			prelist = ['Oh Snap!', 'Stop the ship!', 'Well butter my biscuits!',
-						'I better fix that!', 'Oopsie daisy!', "Yup, that's about right"]
-			button_list = random.sample(prelist, 2)
-			button_list.append('Continue Anyway')
-			random.shuffle(button_list)
-			dialog = cmds.confirmDialog( 
-					title="PGS XML Validation Error", 
-					message = msg , 
-					button =button_list, 
-					defaultButton = 'Oh Snap!', 
-					cancelButton = 'Stop the ship!',
-					dismissString = 'Stop the ship!')
-			if dialog != 'Continue Anyway':
-				cmds.error('\nPGS XML Validation Error!\n{}'.format(msg))
+	# 		prelist = ['Oh Snap!', 'Stop the ship!', 'Well butter my biscuits!',
+	# 					'I better fix that!', 'Oopsie daisy!', "Yup, that's about right"]
+	# 		button_list = random.sample(prelist, 2)
+	# 		button_list.append('Continue Anyway')
+	# 		random.shuffle(button_list)
+	# 		dialog = cmds.confirmDialog( 
+	# 				title="PGS XML Validation Error", 
+	# 				message = msg , 
+	# 				button =button_list, 
+	# 				defaultButton = 'Oh Snap!', 
+	# 				cancelButton = 'Stop the ship!',
+	# 				dismissString = 'Stop the ship!')
+	# 		if dialog != 'Continue Anyway':
+	# 			cmds.error('\nPGS XML Validation Error!\n{}'.format(msg))
 
-	def enable(self):
-		self.categoryGrades.enable()
-		for cat in self.mainCategories:
-			cat.enable()
+	# def enable(self):
+	# 	for cat in self.mainCategories:
+	# 		cat.enable()
 
 	def toolIsComplete(self):
 		self.incomplete_cats = []
@@ -615,41 +610,25 @@ class P3(object):
 			return directoryDict['filename']
 
 	def finished_grading(self, generate_with_HTML, *args):
-		incomplete_sections = self.toolIsComplete()
-		for section in incomplete_sections:
-			if incomplete_sections != []:
-					rand = random.randint(0, len(self.fail_message) - 1)
-					incomplete_str = '\n::Incomplete Sections::\n'
-					for cat in self.incomplete_cats:
-						incomplete_str += '\n' + cat[0] + ':\n' 
-						for section in cat[1]:
-							incomplete_str += section + '\n'
-					message_str = self.fail_message[rand][0] + '\n' + incomplete_str
-					button_str = self.fail_message[rand][1]
-					cmds.confirmDialog( title="PGS Error", message = message_str , button =button_str, dismissString = None)
-					cmds.error('PGS not complete. Please complete all grade sections.')
+
 		feedback = ""
 
 		feedback = self.generate_feedback(generate_with_HTML)
 
 		self.copy_feedback(feedback)
 
-		title = self.get_title_field()
-		if title != "":
-			title += ": {}%".format(self.categoryGrades.gradeTotal())
-		else:
-			title = feedback[0:50]
+		# title = self.get_title_field()
 
-		self.manage_history_queue(title, feedback)
+		# self.manage_history_queue(title, feedback)
 
 		if self.configs['manage states']['reset on copy']:
 			self.resetCategories()
 
-		if self.configs['manage states']['reset title on copy']:
-			self.resetTitle()
+		# if self.configs['manage states']['reset title on copy']:
+		# 	self.resetTitle()
 
-	def get_title_field(self):
-		return cmds.textField('titleField', query = True, text = True).strip()
+	# def get_title_field(self):
+	# 	return cmds.textField('titleField', query = True, text = True).strip()
 
 	def validate_title_field(self):
 		pass
@@ -675,89 +654,58 @@ class P3(object):
 	def generate_feedback(self, generate_with_HTML, *args):
 
 		gathered_grades = self.gatherGrades()
-		title = cmds.textField('titleField', query = True, text = True).strip()
+		# title = cmds.textField('titleField', query = True, text = True).strip()
 
 		grades_list = []
-		if generate_with_HTML: # There has to be a better way...?
-			# grades_list = ["<h2>{}: <i>{}%</i></h2>".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
-			if title != "":
-				grades_list.extend(["Grading for: <b>{}</b>".format(title)])
-			grades_list.extend(["<hr>\n"])
-		else:
-			# grades_list = ["{}: {}%".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
-			if title != "":
-				grades_list.extend(["Grading for: {}".format(title)])
-			grades_list.extend(["\n"])
+		# if generate_with_HTML: # There has to be a better way...?
+		# 	# grades_list = ["<h2>{}: <i>{}%</i></h2>".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
+		# 	if title != "":
+		# 		grades_list.extend(["Grading for: <b>{}</b>".format(title)])
+		# 	# grades_list.extend(["<hr>\n"])
+		# else:
+		# 	# grades_list = ["{}: {}%".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())]
+		# 	if title != "":
+		# 		grades_list.extend(["Grading for: {}".format(title)])
+		# 	grades_list.extend(["\n"])
 
 		for section in gathered_grades:
 
 			# section[0] is the category title
-			# section[1] is the category weight
-			# section[2] is highnotes
-			# section[3] is the category score
-			# section[4] is a list of the subcategories
+			# section[1] is highnotes
+			# section[2] is a list of the subcategories
 
 			# grades_list.extend(["section 0: {}".format(section[0])])
-			# grades_list.extend(["section 1: {}".format(section[1])])
-			# grades_list.extend(["section 2: {}".format(section[2])])
-			# grades_list.extend(["section 3: {}".format(section[3])])
-			# grades_list.extend(["section 4: {}".format(section[4])])
+			# grades_list.extend(["section 2: {}".format(section[1])])
+			# grades_list.extend(["section 4: {}".format(section[2])])
 
-			if section[0] == "grade_boxes_internal":
-				pass
+			# category title
+			if generate_with_HTML:
+				grades_list.extend(["<h2>{}</h2>".format(section[0])])
+				# grades_list.extend(["<i>Instructor Grading Comments</i>"])
+				grades_list.extend(["<hr>"])
 			else:
-				# category title and score
-				if generate_with_HTML:
-					grades_list.extend(["<h2>{}</h2>".format(section[0])])
-				else:
-					grades_list.extend(["{}".format(section[0])])
+				grades_list.extend(["{}".format(section[0])])
 
-				# highnotes
-				if section[2].strip() != "":
+			# highnotes / category comments
+			if section[1].strip() != "":
+				# highnote comments
+				grades_list.extend(["{}".format(section[1])])
 
-					# highnote intro
-					try:
-						category_comment_text_intro = self.xml_elementDefaults.find('category_comments_intro').text
-						if category_comment_text_intro != None: 
-							grades_list.extend([x.strip() for x in category_comment_text_intro.split("\n")])
-					except AttributeError:
-						pass
-
-					# highnote comments
-					grades_list.extend(["{}".format(section[2])])
-
-				# subcategory sections
-				for subcat in section[4]:
+			# subcategory sections
+			for subcat in section[2]:
+				if subcat["comment_text"].strip() != "":
 					# title and grade value
 					if generate_with_HTML:
-						grades_list.extend(["<b>{}:</b>".format(subcat["section_title"])])
+						grades_list.extend(["<h3>{}:</h3>".format(subcat["section_title"])])
 					else:
 						grades_list.extend(["{}:".format(subcat["section_title"])])
-
-					# comments
-					if subcat["comment_text"].strip() != "":
-
-						# comment intro
-						try:
-							comment_textIntro = self.xml_elementDefaults.find('comment_intro').text
-							if comment_textIntro != None: 
-								grades_list.extend([x.strip() for x in comment_textIntro.split("\n")])
-						except AttributeError:
-							pass
-
-						# add comments
-						grades_list.extend(subcat["comment_text"].split("\n"))
-
+					
+					# add comments
+					grades_list.extend(subcat["comment_text"].split("\n"))
 					grades_list.extend([""])
 
-		# if generate_with_HTML:
-		# 	grades_list.extend(["<hr>"])
-		# else:
-		# 	grades_list.extend(["\n"])
-
-		# pyperclip.copy("\n".join(grades_list))
 		return "\n".join(grades_list)
-		# cmds.warning("Text copied successfully.")
+
 
 	# obsolete as of P3
 	def generate_feedback_P2(self, generate_with_HTML, *args):
@@ -853,10 +801,6 @@ class P3(object):
 
 						# add comments
 						grades_list.extend(subcat["comment_text"].split("\n"))
-						
-					# examples
-					# if subcat["example_comments_text"].strip() != "":
-					# 	grades_list.extend(subcat["example_comments_text"].split("\n"))
 
 					grades_list.extend([""])
 
@@ -870,15 +814,12 @@ class P3(object):
 		else: 
 			grades_list.extend(["{}: {}%".format(os.path.basename(self.xmlFile).split('.')[0], self.categoryGrades.gradeTotal())])
 
-		# pyperclip.copy("\n".join(grades_list))
 		return "\n".join(grades_list)
-		# cmds.warning("Text copied successfully.")
 		
 	def gatherGrades(self):
 		gradesForPickle = []
 		for cat in self.mainCategories:
 			gradesForPickle.append(cat.what_is_the_grade())
-		gradesForPickle.append(self.categoryGrades.collect_grades())
 		for index in gradesForPickle:
 			self.log('Grades from cat {} : {}'.format(index[0], index))
 			self.log('\n\n{}\n\n'.format(index))
@@ -915,255 +856,16 @@ class P3(object):
 		self.log('reset PGS grade tool')
 		for cat in self.mainCategories:
 			cat.reset()
-		self.categoryGrades.reset()
-		self.categoryGrades.enable()
 
 	def update(self):
 		for cat in self.mainCategories:
 			cat.update()
-
-	def Update_PGS_intFields(self):
-		"""
-		Update the grade tool
-		"""
-		self.log('Updating PGS')
-
-		currentStatus = []
-		for mainCat in self.mainCategories:
-			currentStatus.append(mainCat.check_grade_status())
-
-		self.categoryGrades.setGradeValues(currentStatus)
-		self.log('grades should be set now')
 
 	def log(self, message, prefix = '.:P3 Grading System::'):
 		"""
 		print stuff yo!
 		"""
 		if self.development:
-			print("%s: %s" % (prefix, message))
-
-class GenerateCategoryGrades(object):
-
-	def __init__(self, rootXMLElement, uiParentFormLayout):
-		parent = uiParentFormLayout
-		rowPadding = 1
-		mainCategories = rootXMLElement.findall('category')
-		self.gradeEquation = rootXMLElement.find('defaults').find('gradeEquation').text
-		self.log('gradeEquation raw: {}'.format(self.gradeEquation))
-		self.catGrades = []
-		cycleCount = 0
-		lastRowControl = []
-		# self.isLate = False
-		for cat in mainCategories:
-			tempList = []
-
-			cat_title = cat.get('title')
-			if cat_title == None:
-				cat_title = cat.find('title').text
-
-			cat_weight = cat.get('weight')
-			if cat_weight == None:
-				cat_weight = cat.find('weight').text
-
-			tempList.append(cat_title[:3])
-			self.log('cat title: %s' % tempList[0])
-			tempRow = cmds.rowLayout(numberOfColumns = 2, columnAlign2 = ['left', 'right'])
-			cmds.text(label = tempList[0], width = 30)
-			tempList.append(cmds.intField(value = 0, width = 30, editable = False, backgroundColor = (0.5,0.5,0.5)))
-			self.log('intField lives at: %s' % tempList[1])
-			tempList.append(cat_weight)
-			self.log('cat weight: {}'.format(tempList[2]))
-			cmds.setParent(tempRow)
-			cmds.setParent(parent)
-
-
-			self.catGrades.append(tempList)
-			self.log('Collected Tuples are: %s' % self.catGrades)
-
-			cmds.formLayout(parent, edit = True, attachForm = [
-				(tempRow, 'left', rowPadding), (tempRow, 'right', rowPadding)
-				])
-			if cycleCount == 0:
-				cmds.formLayout(parent, edit = True, attachForm = [(tempRow, 'top', rowPadding)])
-				cycleCount += 1
-				lastRowControl = tempRow
-			else:
-				cmds.formLayout(parent, edit = True, attachControl = [(tempRow, 'top', rowPadding, lastRowControl)])
-				lastRowControl = tempRow
-
-		################
-		################
-		#Implement variable int fields
-		################
-		################
-		self.grade_boxes = rootXMLElement.findall('grade_box')
-		self.log('self.grade_boxes found: {}'.format(len(self.grade_boxes)))
-		for box in self.grade_boxes:
-			self.log('{}: found'.format(box.get('title')))
-
-		self.log('Create grade boxes')
-		if len(self.grade_boxes) > 0:
-			for box in self.grade_boxes:
-				tempList = []
-				if box.get('title') == 'Late':
-					tempList.append(box.get('title')[:4])
-				else:
-					tempList.append(box.get('title')[:3])
-				self.log('Box title: %s' % tempList[0])
-				tempRow = cmds.rowLayout(numberOfColumns = 2, columnAlign2 = ['left', 'right'])
-				cmds.text(label = tempList[0], width = 30)
-				tempList.append(cmds.intField(value = 0, width = 30, editable = True, backgroundColor = (0.4,0.4,0.4), changeCommand = self.calculateTotal, enable = False))
-				self.log('intField lives at: %s' % tempList[1])
-				tempList.append('100')
-				self.log('box weight: {}'.format(tempList[2]))
-				cmds.setParent(tempRow)
-				cmds.setParent(parent)
-
-
-				self.catGrades.append(tempList)
-
-				cmds.formLayout(parent, edit = True, attachForm = [
-					(tempRow, 'left', rowPadding), (tempRow, 'right', rowPadding)
-					])
-				if cycleCount == 0:
-					cmds.formLayout(parent, edit = True, attachForm = [(tempRow, 'top', rowPadding)])
-					cycleCount += 1
-					lastRowControl = tempRow
-				else:
-					cmds.formLayout(parent, edit = True, attachControl = [(tempRow, 'top', rowPadding, lastRowControl)])
-					lastRowControl = tempRow
-
-
-		totalSeparator = cmds.separator()
-		row2 = cmds.rowLayout(numberOfColumns = 2, columnAlign2 = ['left', 'right'])
-		cmds.text(label = 'Total', width = 30)
-		gradeTotalIntField = cmds.intField(value = 0, width = 30, editable = False, backgroundColor = (0.5,0.5,0.5))
-		self.catGrades.append(('Total', gradeTotalIntField, '100'))
-		cmds.setParent(row2)
-		cmds.setParent(parent)
-
-		cmds.formLayout(parent, edit = True, attachForm = [
-			(totalSeparator, 'left', rowPadding), (totalSeparator, 'right', rowPadding), 
-			(row2, 'left', rowPadding), (row2, 'right', rowPadding)
-			],
-			attachControl = [
-			(totalSeparator, 'top', rowPadding, lastRowControl),
-			(row2, 'top', rowPadding, totalSeparator)])
-
-	def setGradeValues(self, categoryTitleGradeLists):
-		self.log('setting grade intField values')
-		sectionGradeList = categoryTitleGradeLists
-		for section in sectionGradeList:
-			self.log('verify section:')
-			self.log(section)
-			for sectionIntField in self.catGrades:
-				self.log('for sectionIntField: %s' % sectionIntField[0])
-				self.log('section letters are: %s' % section[0][:3])
-				if section[0][:3] == sectionIntField[0]:
-					self.log('Its a match!')
-					cmds.intField(sectionIntField[1], edit = True, value = section[2])
-				else: 
-					self.log('No match.')
-		self.calculateTotal()
-
-	def enable(self):
-		for field in self.catGrades:
-			for box in self.grade_boxes:
-				self.log('field:{}\nbox:{}'.format(field[0], box.get('title')))
-				if field[0] == 'Late' == box.get('title')[:4]:
-					cmds.intField(field[1], edit = True, enable = True)
-				elif field[0] == box.get('title')[:3]:
-					cmds.intField(field[1], edit = True, enable = True)
-
-	def disable(self):
-		for field in self.catGrades:
-			for box in self.grade_boxes:
-				self.log('field:{}\nbox:{}'.format(field[0], box.get('title')))
-				if field[0] == 'Late' == box.get('title')[:4]:
-					cmds.intField(field[1], edit = True, enable = False)
-				elif field[0] == box.get('title')[:3]:
-					cmds.intField(field[1], edit = True, enable = False)
-
-	def collect_grades(self):
-		self.log('Collect category grades')
-		#return a list of lists for grade_boxes
-		return_list = []
-		return_list.append('grade_boxes_internal') #title
-		return_list.append(100) #100% weighting
-		return_list.append('') #fake 'highnotes'
-		grade_box_list = [] #fake 'subcategory' list, holds grading box info
-		for field in self.catGrades:
-			for box in self.grade_boxes:
-				self.log('field:{}\nbox:{}'.format(field[0], box.get('title')))
-				if field[0] == 'Late' == box.get('title')[:4]:
-					grade_box_list.append({
-						'section_title': field[0], 
-						'section_weight': 100,
-						'grade_value' : cmds.intField(field[1], query = True, value = True),
-						'comment_text' : '',
-						'default_comments_text' : box.text,
-						# 'example_comments_text' : '',
-						'is_complete': True
-									})
-				elif field[0] == box.get('title')[:3]:
-					grade_box_list.append({
-						'section_title': field[0], 
-						'section_weight': 100,
-						'grade_value' : cmds.intField(field[1], query = True, value = True),
-						'comment_text' : '',
-						'default_comments_text' : box.text,
-						# 'example_comments_text' : '',
-						'is_complete': True
-									})
-		return_list.append(0)
-		return_list.append(grade_box_list)
-		return return_list
-
-	def gradeTotal(self):
-		return cmds.intField(self.catGrades[-1][1], query = True, value = True)
-
-	def reset(self):
-		self.log('resetting late grade field?')
-
-		for field in self.catGrades:
-			for box in self.grade_boxes:
-				self.log('field:{}\nbox:{}'.format(field[0], box.get('title')))
-				if field[0] == 'Late' == box.get('title')[:4]:
-					cmds.intField(field[1], edit = True, value = 0)
-				elif field[0] == box.get('title')[:3]:
-					cmds.intField(field[1], edit = True, value = 0)
-		# cmds.intField(self.catGrades[-2][1], edit = True, value = 0)
-		self.log('late grade field set')
-		self.calculateTotal()
-
-	def calculateTotal(self, *args):
-		equation = self.gradeEquation
-		for section in self.catGrades:
-			self.log('Section: {}'.format(section[0]))
-		for section in self.catGrades:
-			self.log('section title: {}'.format(section[0]))
-			self.log('section int field value: {}'.format(cmds.intField(section[1], query = True, value = True)))
-			grade = cmds.intField(section[1], query = True, value = True)
-			equation = equation.replace(section[0], str(round(grade * (float(section[2])/100.0), 2)))
-			self.log('equation: {}'.format(equation))
-		self.log('Grade Total Eval: {}'.format(eval(equation)))
-		#
-		#
-		#
-		### HERE!!! FLoat to int! (perhaps round?)###
-		#
-		#
-		#
-		gradeTotalValue = eval(equation)
-		if gradeTotalValue <= 0: gradeTotalValue = 0
-		self.log('Grade Total Value: {}'.format(gradeTotalValue))
-		cmds.intField(self.catGrades[-1][1], edit = True, value = gradeTotalValue)
-
-	def log(self, message, prefix = '.:Generate Category Grades::', hush = True):
-		"""
-		print stuff yo!
-		"""
-		if not hush:
 			print("%s: %s" % (prefix, message))
 
 

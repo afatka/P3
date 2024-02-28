@@ -12,11 +12,11 @@ import xml.etree.ElementTree as et
 import re, sys
 class  SubcategoryGradeSection(object):
 
-	def __init__(self, subcategoryFromXML, defaultsFromXML, updateFunction, runAuto, configDict):
+	def __init__(self, subcategoryFromXML, defaultsFromXML, runAuto, configDict):
 		"""
 		take the element tree element 'subcategory' from the xml to generate the subcategory section'
 		"""
-		self.updateFunction  = updateFunction
+		# self.updateFunction  = updateFunction
 		self.runAuto = runAuto
 		self.configDict = configDict
 
@@ -31,38 +31,38 @@ class  SubcategoryGradeSection(object):
 		scrollField_height = 125
 		row_spacing = 0
 
-		self.current_grade_value = 0
+		# self.current_grade_value = 0
 		self.current_comment_text = ''
-		self.current_default_comment_text = ''
+		# self.current_default_comment_text = ''
 		# self.current_example_comment_text = ''
-		self.auto_flagged_list = []
-		self.is_complete = False
+		# self.auto_flagged_list = []
+		# self.is_complete = False
 
 		self.subcatXML = subcategoryFromXML
-		self.log('trying to unpack gradeValue from defaults')
-		self.log('defaultsFromXML are: %s' % defaultsFromXML)
-		self.grade_values = defaultsFromXML.find('gradeValue')
-		self.log('grade_values: %s' % self.grade_values)
+		# self.log('trying to unpack gradeValue from defaults')
+		# self.log('defaultsFromXML are: %s' % defaultsFromXML)
+		# self.grade_values = defaultsFromXML.find('gradeValue')
+		# self.log('grade_values: %s' % self.grade_values)
 
 		self.title = self.subcatXML.get('title')
 		if self.title == None:
 			self.title = self.subcatXML.find('title').text
 
-		self.weight = self.subcatXML.get('weight')
-		if self.weight == None:
-			self.weight = self.subcatXML.find('weight').text
+		# self.weight = self.subcatXML.get('weight')
+		# if self.weight == None:
+		# 	self.weight = self.subcatXML.find('weight').text
 
-		try: 
-			self.auto = self.subcatXML.find('auto').text
-		except AttributeError: 
-			self.auto = ''
+		# try: 
+		# 	self.auto = self.subcatXML.find('auto').text
+		# except AttributeError: 
+		# 	self.auto = ''
 
-		self.autocomplete = self.subcatXML.get('autocomplete')
-		if self.autocomplete:
-			try:
-				self.autocomplete = float(self.autocomplete)
-			except ValueError as e:
-				cmds.error("\n\nSubcategory: {}\nautocomplete value: {}\nThe value of autocomplete must be a legal number.".format(self.title, self.autocomplete))
+		# self.autocomplete = self.subcatXML.get('autocomplete')
+		# if self.autocomplete:
+		# 	try:
+		# 		self.autocomplete = float(self.autocomplete)
+		# 	except ValueError as e:
+		# 		cmds.error("\n\nSubcategory: {}\nautocomplete value: {}\nThe value of autocomplete must be a legal number.".format(self.title, self.autocomplete))
 
 		self.rmb = [] # [0] title, [1] text, [2] divider
 		if self.subcatXML.findall('RMB'):
@@ -77,54 +77,54 @@ class  SubcategoryGradeSection(object):
 		
 		self.log('starting subcategory GUI')
 		# self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, backgroundColor = self.configDict["colors"]['incomplete color'])
-		self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, 
-														 backgroundColor = self.configDict["colors"]['incomplete color'],
-														 visible = False) # P3 update - visible = false
+		# self.subcat_main_column_layout = cmds.formLayout(numberOfDivisions = 100, 
+		# 												 backgroundColor = self.configDict["colors"]['incomplete color'],
+		# 												 visible = False) # P3 update - visible = false
 
 
 		seperatorReference = cmds.separator(style = 'in')
 
-		self.titleText = cmds.text(label = self.title, align = 'left')
-		if self.auto != '':
-			cmds.popupMenu(parent = self.titleText, button = 3)
-			cmds.menuItem(label = 'Run Auto', command = lambda *args: self.runAuto(self.subcatXML, self, auto = True))
-			cmds.menuItem(label = 'Select Flagged', command = lambda *args: self.select_flagged())
+		# self.titleText = cmds.text(label = self.title, align = 'left')
+		# if self.auto != '':
+		# 	cmds.popupMenu(parent = self.titleText, button = 3)
+		# 	cmds.menuItem(label = 'Run Auto', command = lambda *args: self.runAuto(self.subcatXML, self, auto = True))
+		# 	cmds.menuItem(label = 'Select Flagged', command = lambda *args: self.select_flagged())
 		# self.int_field_slider_row_layout = cmds.rowLayout(numberOfColumns = 2)#int_field_slider_row_layout
-		self.int_field_slider_row_layout = cmds.formLayout(numberOfDivisions = 100)
+		# self.int_field_slider_row_layout = cmds.formLayout(numberOfDivisions = 100)
 
-		self.grade_intField = cmds.intField( minValue=0, maxValue=150, step=1, width = 36, changeCommand = lambda *args: self.update_subcategory('intField', *args))
-		self.grade_slider = cmds.intSlider( min=-100, max=0, value=0, step=1, changeCommand = lambda *args: self.update_subcategory('slider', *args), dragCommand = lambda *args: self.update_subcategory('slider', *args)) 
+		# self.grade_intField = cmds.intField( minValue=0, maxValue=150, step=1, width = 36, changeCommand = lambda *args: self.update_subcategory('intField', *args))
+		# self.grade_slider = cmds.intSlider( min=-100, max=0, value=0, step=1, changeCommand = lambda *args: self.update_subcategory('slider', *args), dragCommand = lambda *args: self.update_subcategory('slider', *args)) 
 
-		cmds.setParent(self.int_field_slider_row_layout)
-		cmds.formLayout(self.int_field_slider_row_layout, edit = True,
-			attachForm = [(self.grade_intField, 'left', 0),(self.grade_slider, 'right', 0)],
-			attachControl = [(self.grade_slider, 'left', 5, self.grade_intField)]
-			)
+		# cmds.setParent(self.int_field_slider_row_layout)
+		# cmds.formLayout(self.int_field_slider_row_layout, edit = True,
+		# 	attachForm = [(self.grade_intField, 'left', 0),(self.grade_slider, 'right', 0)],
+		# 	attachControl = [(self.grade_slider, 'left', 5, self.grade_intField)]
+		# 	)
 
-		cmds.setParent(self.subcat_main_column_layout)
+		# cmds.setParent(self.subcat_main_column_layout)
 
-		cmds.formLayout(self.subcat_main_column_layout, edit = True,
-			attachForm = [(seperatorReference, 'left', 0),(seperatorReference, 'top', 0),(seperatorReference, 'right', 0),
-						(self.titleText, 'left', 0),
-						(self.int_field_slider_row_layout, 'left', 0),(self.int_field_slider_row_layout, 'right', 10)],
-			attachControl = [(self.titleText, 'top', 0, seperatorReference), (self.int_field_slider_row_layout, 'top', 2, self.titleText)]
-			)
+		# cmds.formLayout(self.subcat_main_column_layout, edit = True,
+		# 	attachForm = [(seperatorReference, 'left', 0),(seperatorReference, 'top', 0),(seperatorReference, 'right', 0),
+		# 				(self.titleText, 'left', 0),
+		# 				(self.int_field_slider_row_layout, 'left', 0),(self.int_field_slider_row_layout, 'right', 10)],
+		# 	attachControl = [(self.titleText, 'top', 0, seperatorReference), (self.int_field_slider_row_layout, 'top', 2, self.titleText)]
+		# 	)
 
 
-		self.radio_creator(self.subcatXML.find('gradeComment'))
+		# self.radio_creator(self.subcatXML.find('gradeComment'))
 
-		cmds.formLayout(self.subcat_main_column_layout, edit = True,
-			attachForm = [(self.radio_row_layout, 'left', 0),(self.radio_row_layout, 'right', 0)],
-			attachControl = [(self.radio_row_layout, 'top', 0, self.int_field_slider_row_layout)]
-			)
+		# cmds.formLayout(self.subcat_main_column_layout, edit = True,
+		# 	attachForm = [(self.radio_row_layout, 'left', 0),(self.radio_row_layout, 'right', 0)],
+		# 	attachControl = [(self.radio_row_layout, 'top', 0, self.int_field_slider_row_layout)]
+		# 	)
 
-		self.log('radios created, starting comment frames')
+		# self.log('radios created, starting comment frames')
 		# self.subcat_comments_frame_layout = cmds.frameLayout( label='Comments', collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'], expandCommand = self.maintain_default_comment_visibility) 
-		self.subcat_comments_frame_layout = cmds.frameLayout( label=self.title, collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'], expandCommand = self.maintain_default_comment_visibility) 
+		self.subcat_comments_frame_layout = cmds.frameLayout( label=self.title, collapsable = True, collapse = False, backgroundColor = self.configDict["colors"]['dim'])#, expandCommand = self.maintain_default_comment_visibility) 
 
 
 		# self.default_comments_frameLayout = cmds.frameLayout( label='Default Comments', collapsable = True, collapse = True, backgroundColor = self.colors['dim']) 
-		self.default_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, visible = self.default_comment_is_visible, changeCommand = lambda *args: self.update_subcategory('default_comments_text', *args)) 
+		# self.default_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, visible = self.default_comment_is_visible, changeCommand = lambda *args: self.update_subcategory('default_comments_text', *args)) 
 		# cmds.setParent('..')
 
 		self.comments_text_field = cmds.scrollField( height = scrollField_height, wordWrap = True,  changeCommand = lambda *args: self.update_subcategory('comments_text', *args))
@@ -150,24 +150,13 @@ class  SubcategoryGradeSection(object):
 		cmds.menuItem(divider = True)
 		cmds.menuItem(divider = True)
 		cmds.menuItem(label = 'Clear Comments', command = self.clear_comments)
-
-		# cmds.button(label = 'Add Selected to Examples', command = lambda *args: self.add_selected_to_examples(*args)) 
-		# add selected to examples
-		# cmds.button(label = '', visible = False, enable = False, height = 1) 
-		# self.example_frameLayout = cmds.frameLayout( label='Example Objects', collapsable = True, collapse = True, visible = False, enable = False) 
-		# self.example_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, changeCommand = lambda *args: self.update_subcategory('example_comments_text', *args))
-		# cmds.setParent('..')
-
-		# self.default_comments_frameLayout = cmds.frameLayout( label='Default Comments', collapsable = True, collapse = True, backgroundColor = self.colors['dim']) 
-		# self.default_comments = cmds.scrollField( height = scrollField_height, wordWrap = True, changeCommand = lambda *args: self.update_subcategory('default_comments_text', *args)) 
-		# cmds.setParent('..')
 		self.toggleDefaultCommentVisButton = cmds.button(label = "Toggle Default Comment Visibility", command = self.toggle_default_comments, backgroundColor = self.configDict["colors"]['dim'], visible = False) # P3 Update visible = false
 		cmds.setParent('..')
 
 		cmds.setParent('..')
 
-		if self.autocomplete:
-			self.autocomplete_update()
+		# if self.autocomplete:
+		# 	self.autocomplete_update()
 
 	def toggle_default_comments(self, *args):
 		 if self.default_comment_is_visible: 
@@ -177,12 +166,12 @@ class  SubcategoryGradeSection(object):
 		 	cmds.scrollField( self.default_comments, edit = True, visible = True)
 		 	self.default_comment_is_visible = True
 
-	def maintain_default_comment_visibility(self, *args):
-		if self.default_comment_is_visible: 
-		 	cmds.scrollField( self.default_comments, edit = True, visible = True)
-		else:
-		 	cmds.scrollField( self.default_comments, edit = True, visible = False)
-		 	cmds.button(self.toggleDefaultCommentVisButton, edit = True, visible = False) # P3 Update
+	# def maintain_default_comment_visibility(self, *args):
+	# 	if self.default_comment_is_visible: 
+	# 	 	cmds.scrollField( self.default_comments, edit = True, visible = True)
+	# 	else:
+	# 	 	cmds.scrollField( self.default_comments, edit = True, visible = False)
+	# 	 	cmds.button(self.toggleDefaultCommentVisButton, edit = True, visible = False) # P3 Update
 
 	def clear_comments(self, *args):
 		cmds.scrollField(self.comments_text_field, edit = True, text = '')
@@ -253,79 +242,79 @@ class  SubcategoryGradeSection(object):
 		trigger on element change command to update all the other fields in subcategory
 		"""
 
-		if control_type == 'intField':
-			self.log('query intField and update others')
-			intField_value = cmds.intField(self.grade_intField, query = True, value = True)
-			self.log('intField is %s' % intField_value)
+		# if control_type == 'intField':
+		# 	self.log('query intField and update others')
+		# 	intField_value = cmds.intField(self.grade_intField, query = True, value = True)
+		# 	self.log('intField is %s' % intField_value)
 
-			self.current_grade_value = intField_value
-			self.log('current grade is: %s' % self.current_grade_value)
-			cmds.intSlider(self.grade_slider, edit=True, value = -intField_value)
-			self.update_radios_default_comments(intField_value)
-			self.update_default_comments()
-			self.update_is_complete()
-			self.updateFunction()
+		# 	self.current_grade_value = intField_value
+		# 	self.log('current grade is: %s' % self.current_grade_value)
+		# 	cmds.intSlider(self.grade_slider, edit=True, value = -intField_value)
+		# 	self.update_radios_default_comments(intField_value)
+		# 	self.update_default_comments()
+		# 	self.update_is_complete()
+		# 	self.updateFunction()
 
-		elif control_type == 'slider':
+		# elif control_type == 'slider':
 
-			self.log('query slider and update others')
-			slider_value = abs(cmds.intSlider(self.grade_slider, query = True, value = True))
-			self.log('intSlider is %s' % slider_value)
+		# 	self.log('query slider and update others')
+		# 	slider_value = abs(cmds.intSlider(self.grade_slider, query = True, value = True))
+		# 	self.log('intSlider is %s' % slider_value)
 
-			self.current_grade_value = slider_value
-			self.log('current grade is: %s' % self.current_grade_value)
-			cmds.intField(self.grade_intField, edit = True, value = slider_value)
-			self.update_radios_default_comments(slider_value)
-			self.update_default_comments()
-			self.update_is_complete()
-			self.updateFunction()
+		# 	self.current_grade_value = slider_value
+		# 	self.log('current grade is: %s' % self.current_grade_value)
+		# 	cmds.intField(self.grade_intField, edit = True, value = slider_value)
+		# 	self.update_radios_default_comments(slider_value)
+		# 	self.update_default_comments()
+		# 	self.update_is_complete()
+		# 	self.updateFunction()
 
-		elif control_type == 'radioButton':
-			self.log('query radio collection and update others')
-			selected = cmds.radioCollection(self.grade_radio_collection, query = True, select = True)
-			selected_letter = cmds.radioButton(selected, query = True, label = True)
-			selected_letter = re.sub('\\+', 'plus', selected_letter)
-			self.log('selected radioButton: %s' % selected_letter)
+		# elif control_type == 'radioButton':
+		# 	self.log('query radio collection and update others')
+		# 	selected = cmds.radioCollection(self.grade_radio_collection, query = True, select = True)
+		# 	selected_letter = cmds.radioButton(selected, query = True, label = True)
+		# 	selected_letter = re.sub('\\+', 'plus', selected_letter)
+		# 	self.log('selected radioButton: %s' % selected_letter)
 
-			try:
-				self.current_grade_value = int(self.grade_values.find(selected_letter).text)
-			except AttributeError as e:
-				self.current_grade_value = int(self.grade_values.find("_{}".format(selected_letter)).text)
+		# 	try:
+		# 		self.current_grade_value = int(self.grade_values.find(selected_letter).text)
+		# 	except AttributeError as e:
+		# 		self.current_grade_value = int(self.grade_values.find("_{}".format(selected_letter)).text)
 
 
-			# self.current_grade_value = int(self.grade_values.find(selected_letter).text)
-			self.log('current grade is: %s' % self.current_grade_value)
-			cmds.intField(self.grade_intField, edit = True, value = self.current_grade_value)
-			cmds.intSlider(self.grade_slider, edit = True, value = -self.current_grade_value)
-			self.log('selected_letter: %s' % selected_letter)
+		# 	# self.current_grade_value = int(self.grade_values.find(selected_letter).text)
+		# 	self.log('current grade is: %s' % self.current_grade_value)
+		# 	cmds.intField(self.grade_intField, edit = True, value = self.current_grade_value)
+		# 	cmds.intSlider(self.grade_slider, edit = True, value = -self.current_grade_value)
+		# 	self.log('selected_letter: %s' % selected_letter)
 			
-			try:
-				cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find(selected_letter).text)
-			except AttributeError as e:
-				cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find("_{}".format(selected_letter)).text)
+		# 	try:
+		# 		cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find(selected_letter).text)
+		# 	except AttributeError as e:
+		# 		cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find("_{}".format(selected_letter)).text)
 
-			# cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find(selected_letter).text)
-			self.current_default_comment_text = cmds.scrollField(self.default_comments, query = True, text = True)
-			self.log('Default Comments Updated')
-			self.log(self.current_default_comment_text)
-			self.update_is_complete()
-			self.updateFunction()
+		# 	# cmds.scrollField(self.default_comments, edit = True, text = self.subcatXML.find('gradeComment').find(selected_letter).text)
+		# 	self.current_default_comment_text = cmds.scrollField(self.default_comments, query = True, text = True)
+		# 	self.log('Default Comments Updated')
+		# 	self.log(self.current_default_comment_text)
+		# 	self.update_is_complete()
+		# 	self.updateFunction()
 
-		elif control_type == 'default_comments_text':
-			self.current_default_comment_text = cmds.scrollField(self.default_comments, query = True, text = True)
-			self.log('Default Comments Updated')
-			self.log(self.current_default_comment_text)
-			self.update_is_complete()
+		# elif control_type == 'default_comments_text':
+		# 	self.current_default_comment_text = cmds.scrollField(self.default_comments, query = True, text = True)
+		# 	self.log('Default Comments Updated')
+		# 	self.log(self.current_default_comment_text)
+		# 	self.update_is_complete()
 
 		# elif control_type == 'example_comments_text':
 		# 	self.current_example_comment_text = cmds.scrollField(self.example_comments, query = True, text = True)
 		# 	self.log('examples updated')
 		# 	self.log(self.current_example_comment_text)
 
-		else:
-			self.current_comment_text = cmds.scrollField(self.comments_text_field, query = True, text = True)
-			self.log('comments updated')
-			self.log(self.current_comment_text)
+		# else:
+		self.current_comment_text = cmds.scrollField(self.comments_text_field, query = True, text = True)
+		self.log('comments updated')
+		self.log(self.current_comment_text)
 	
 	def update_radios_default_comments(self, value):
 		"""
@@ -555,12 +544,12 @@ class  SubcategoryGradeSection(object):
 
 		return_dict = {
 			'section_title': self.title, 
-			'section_weight': self.weight,
-			'grade_value' : self.current_grade_value,
+			# 'section_weight': self.weight,
+			# 'grade_value' : self.current_grade_value,
 			'comment_text' : self.current_comment_text,
-			'default_comments_text' : self.current_default_comment_text,
+			# 'default_comments_text' : self.current_default_comment_text,
 			# 'example_comments_text' : self.current_example_comment_text,
-			'is_complete': self.is_complete
+			# 'is_complete': self.is_complete
 		}
 
 		return return_dict
@@ -586,25 +575,25 @@ class  SubcategoryGradeSection(object):
 		self.log('auto_flagged_list updated: \n{}'.format(self.auto_flagged_list))
 
 	def reset(self):
-		cmds.intField(self.grade_intField, edit = True, value = 0)
-		self.update_subcategory('intField')
+		# cmds.intField(self.grade_intField, edit = True, value = 0)
+		# self.update_subcategory('intField')
 		cmds.scrollField(self.comments_text_field, edit = True, text = '')
 		self.update_subcategory('comments_text')
-		cmds.scrollField(self.default_comments, edit = True, text = '')
-		self.update_subcategory('default_comments_text')
+		# cmds.scrollField(self.default_comments, edit = True, text = '')
+		# self.update_subcategory('default_comments_text')
 		# cmds.scrollField(self.example_comments, edit = True, text = '')
 		# self.update_subcategory('example_comments_text')
-		self.log('reset subsection: {}'.format(self.title))
-		self.log('Selection hidden radio')
-		cmds.radioButton(self.resetRadioButton, edit = True, select = True)
+		# self.log('reset subsection: {}'.format(self.title))
+		# self.log('Selection hidden radio')
+		# cmds.radioButton(self.resetRadioButton, edit = True, select = True)
 		self.log('hidden radio selected')
-		self.is_complete = False
+		# self.is_complete = False
 		#collapse frames
 		cmds.frameLayout(self.subcat_comments_frame_layout, edit = True, collapse = False)
-		self.maintain_default_comment_visibility()
+		# self.maintain_default_comment_visibility()
 
-		if self.autocomplete:
-			self.autocomplete_update()
+		# if self.autocomplete:
+		# 	self.autocomplete_update()
 
 	def update(self):
 		self.current_grade_value = cmds.intField(self.grade_intField, query = True, value = True)
@@ -612,11 +601,11 @@ class  SubcategoryGradeSection(object):
 		# self.current_example_comment_text = cmds.scrollField(self.example_comments, query = True, text = True)
 		self.current_comment_text = cmds.scrollField(self.comments_text_field, query = True, text = True)
 
-	def disable(self):
-		cmds.formLayout(self.subcat_main_column_layout, edit = True, enable = False)
+	# def disable(self):
+	# 	cmds.formLayout(self.subcat_main_column_layout, edit = True, enable = False)
 
-	def enable(self):
-		cmds.formLayout(self.subcat_main_column_layout, edit = True, enable = True)
+	# def enable(self):
+	# 	cmds.formLayout(self.subcat_main_column_layout, edit = True, enable = True)
 
 	def log(self, message, prefix = '.:subcategory_class::', hush = True):
 		"""
@@ -627,7 +616,7 @@ class  SubcategoryGradeSection(object):
 
 class MainCategoryGradeSection(object):
 
-	def __init__(self, mainCategoryFromXML, defaultsFromXML, updateFunction, configDict):
+	def __init__(self, mainCategoryFromXML, defaultsFromXML, configDict):
 
 		self.colors = configDict['colors']
 		self.configDict = configDict
@@ -636,20 +625,20 @@ class MainCategoryGradeSection(object):
 		row_spacing = 0
 
 		self.current_highnote_comment_text = ''
-		self.current_grade_value = 0 
+		# self.current_grade_value = 0 
 
-		self.updatePGS = updateFunction
+		# self.updatePGS = updateFunction
 
 		self.log("Main Category Initializing")
 		self.maincategory = mainCategoryFromXML
 		self.defaults = defaultsFromXML
 
-		self.log('\n\nGutCheck:')
-		self.gutCheck = None
+		# self.log('\n\nGutCheck:')
+		# self.gutCheck = None
 		
-		if self.maincategory.find('gutCheck') != None:
-			self.gutCheck = self.maincategory.find('gutCheck').text
-		self.log('{}\n\n'.format(self.gutCheck))
+		# if self.maincategory.find('gutCheck') != None:
+		# 	self.gutCheck = self.maincategory.find('gutCheck').text
+		# self.log('{}\n\n'.format(self.gutCheck))
 
 		self.rmb = []
 		if self.maincategory.findall('RMB'):
@@ -666,14 +655,14 @@ class MainCategoryGradeSection(object):
 		if self.title == None:
 			self.title = self.maincategory.find('title').text
 
-		self.weight = self.maincategory.get('weight')
-		if self.weight == None:
-			self.weight = self.maincategory.find('weight').text
+		# self.weight = self.maincategory.get('weight')
+		# if self.weight == None:
+		# 	self.weight = self.maincategory.find('weight').text
 			
-		self.log('{} Category Weight: {}'.format(self.title, self.weight))
+		# self.log('{} Category Weight: {}'.format(self.title, self.weight))
 
 		self.mainCategoryRootScrollLayout = cmds.scrollLayout(childResizable = True)
-		self.maincat_main_column_layout = cmds.formLayout(parent = self.mainCategoryRootScrollLayout, numberOfDivisions = 100, enable = False)
+		self.maincat_main_column_layout = cmds.formLayout(parent = self.mainCategoryRootScrollLayout, numberOfDivisions = 100, enable = True)
 
 		self.mainFrameLayout = cmds.frameLayout(label = 'Category Comments',collapsable = False, collapse = False, backgroundColor = self.colors['dim'])
 
@@ -727,28 +716,28 @@ class MainCategoryGradeSection(object):
 
 		#create subcats
 		for sub in self.subcats:
-			self.subcategories.append(SubcategoryGradeSection(sub, self.defaults, self.updatePGS, self.runAuto, self.configDict))
+			self.subcategories.append(SubcategoryGradeSection(sub, self.defaults, self.runAuto, self.configDict))
 			cmds.setParent(subcatColumnLayout)
 
 		# attach subcats to form layout
 		cmds.formLayout(subcatColumnLayout, edit = True, 
-			attachForm = [(self.subcategories[0].subcat_main_column_layout, 'top', 0), 
-						(self.subcategories[0].subcat_main_column_layout, 'left', 0), 
-						(self.subcategories[0].subcat_main_column_layout, 'right', 0)]
+			attachForm = [(self.subcategories[0].subcat_comments_frame_layout, 'top', 0), 
+						(self.subcategories[0].subcat_comments_frame_layout, 'left', 0), 
+						(self.subcategories[0].subcat_comments_frame_layout, 'right', 0)]
 			)
-		cmds.formLayout(subcatColumnLayout, edit = True, 
-			attachForm = [(self.subcategories[0].subcat_comments_frame_layout, 'left', 0), (self.subcategories[0].subcat_comments_frame_layout, 'right', 0)],
-			attachControl = [(self.subcategories[0].subcat_comments_frame_layout, 'top', 5, self.subcategories[0].subcat_main_column_layout)]
-			)
+		# cmds.formLayout(subcatColumnLayout, edit = True, 
+		# 	attachForm = [(self.subcategories[0].subcat_comments_frame_layout, 'left', 0), (self.subcategories[0].subcat_comments_frame_layout, 'right', 0)],
+		# 	attachControl = [(self.subcategories[0].subcat_comments_frame_layout, 'top', 5, self.subcategories[0].subcat_main_column_layout)]
+		# 	)
 		temp_parent = self.subcategories[0].subcat_comments_frame_layout
 		for sub in self.subcategories[1:]:
 
 			#attach grade section of subcat
-			cmds.formLayout(subcatColumnLayout, edit = True, 
-			attachForm = [(sub.subcat_main_column_layout, 'left', 0), (sub.subcat_main_column_layout, 'right', 0)],
-			attachControl = [(sub.subcat_main_column_layout, 'top', 5, temp_parent)]
-			)
-			temp_parent = sub.subcat_main_column_layout
+			# cmds.formLayout(subcatColumnLayout, edit = True, 
+			# attachForm = [(sub.subcat_main_column_layout, 'left', 0), (sub.subcat_main_column_layout, 'right', 0)],
+			# attachControl = [(sub.subcat_main_column_layout, 'top', 5, temp_parent)]
+			# )
+			# temp_parent = sub.subcat_main_column_layout
 
 			#attach comment section of subcat
 			cmds.formLayout(subcatColumnLayout, edit = True, 
@@ -758,7 +747,7 @@ class MainCategoryGradeSection(object):
 			temp_parent = sub.subcat_comments_frame_layout
 
 		
-		cmds.setParent(self.maincat_main_column_layout)
+		# cmds.setParent(self.maincat_main_column_layout)
 		cmds.formLayout(self.maincat_main_column_layout, edit = True, 
 			attachForm = [(subcatColumnLayout, 'left', 0), (subcatColumnLayout, 'right', 0)],
 			attachControl = [(subcatColumnLayout, 'top', 5, self.mainFrameLayout)]
@@ -771,27 +760,30 @@ class MainCategoryGradeSection(object):
 
 		# begin edit 5/2/23
 		# add previous and next category buttons
-		self.previous_tab_button = cmds.button(label = "< Previous")
-		self.next_tab_button = cmds.button(label = "Next >")
-		cmds.setParent(self.maincat_main_column_layout)
+		# self.previous_tab_button = cmds.button("previous tab button", label = "< Previous")
+		# self.next_tab_button = cmds.button("next tab button", label = "Next >")
+		# cmds.setParent(self.maincat_main_column_layout)
+
+		# print("Previous: {}".format(self.previous_tab_button))
+		# print("Next: {}".format(self.next_tab_button))
 
 		# attach buttons to frame
-		cmds.formLayout(self.maincat_main_column_layout, edit = True, 
-			attachForm = [(self.previous_tab_button, 'left', 0),(self.previous_tab_button, 'bottom', 0), (self.next_tab_button, 'right', 0), (self.next_tab_button, 'bottom', 0)],
-			attachControl = [(self.next_tab_button, 'left', 5, self.previous_tab_button)], 
-			attachPosition = [(self.previous_tab_button, 'right', 0, 50)]
-			)
+		# cmds.formLayout(self.maincat_main_column_layout, edit = True, 
+		# 	attachForm = [(self.previous_tab_button, 'left', 0),(self.previous_tab_button, 'bottom', 0), (self.next_tab_button, 'right', 0), (self.next_tab_button, 'bottom', 0)],
+		# 	attachControl = [(self.next_tab_button, 'left', 5, self.previous_tab_button)], 
+		# 	attachPosition = [(self.previous_tab_button, 'right', 0, 50)]
+		# 	)
 
 		#####
 		#####
 		#####
 		#####
 
-	def set_previous_category_button_command(self, new_command):
-		cmds.button(self.previous_tab_button, edit = True, command = new_command)
+	# def set_previous_category_button_command(self, new_command):
+	# 	cmds.button(self.previous_tab_button, edit = True, command = new_command)
 
-	def set_next_category_button_command(self, new_command):
-		cmds.button(self.next_tab_button, edit = True, command = new_command)
+	# def set_next_category_button_command(self, new_command):
+	# 	cmds.button(self.next_tab_button, edit = True, command = new_command)
 
 
 	def append_session_commment(self):
@@ -922,18 +914,18 @@ class MainCategoryGradeSection(object):
 
 		self.update_maincategory('highnotes')
 
-	def enable(self):
-		self.log('enable the section')
-		cmds.formLayout(self.maincat_main_column_layout, edit = True, enable = True)
-		for sub in self.subcategories:
-			sub.enable()
+	# def enable(self):
+	# 	self.log('enable the section')
+	# 	cmds.formLayout(self.maincat_main_column_layout, edit = True, enable = True)
+	# 	for sub in self.subcategories:
+	# 		sub.enable()
 
-	def disable(self):
-		self.log('disable the section')
-		cmds.formLayout(self.maincat_main_column_layout, edit = True, enable = False)
-		for sub in self.subcategories:
-			sub.disable()
-		self.log('did it work?')
+	# def disable(self):
+	# 	self.log('disable the section')
+	# 	cmds.formLayout(self.maincat_main_column_layout, edit = True, enable = False)
+	# 	for sub in self.subcategories:
+	# 		sub.disable()
+	# 	self.log('did it work?')
 
 	def gutCheckGo(self, *args):
 		self.log('gut check')
@@ -1135,19 +1127,19 @@ class MainCategoryGradeSection(object):
 		self.log('collect grades from subsections')
 		return_list = []
 		return_list.append(self.title)
-		return_list.append(self.weight)
+		# return_list.append(self.weight)
 
 		# update highnotes before returning
 		self.update_maincategory("highnotes")
 
 		return_list.append(self.current_highnote_comment_text)
-		sectionGradeTotal = 0
+		# sectionGradeTotal = 0
 		subGradeList = []
 		for sub in self.subcategories:
 			subGradeList.append(sub.what_is_the_grade())
-			self.log('Grade weight and value: {} * {}'.format(sub.what_is_the_grade()['grade_value'], sub.what_is_the_grade()['section_weight']))
-			sectionGradeTotal += (sub.what_is_the_grade()['grade_value'] * (float(sub.what_is_the_grade()['section_weight'])/100.0))
-		return_list.append(sectionGradeTotal)
+			# self.log('Grade weight and value: {} * {}'.format(sub.what_is_the_grade()['grade_value'], sub.what_is_the_grade()['section_weight']))
+		# 	sectionGradeTotal += (sub.what_is_the_grade()['grade_value'] * (float(sub.what_is_the_grade()['section_weight'])/100.0))
+		# return_list.append(sectionGradeTotal)
 		return_list.append(subGradeList)
 		return return_list
 
