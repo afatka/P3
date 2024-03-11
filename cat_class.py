@@ -589,7 +589,9 @@ class  SubcategoryGradeSection(object):
 		self.log('hidden radio selected')
 		# self.is_complete = False
 		#collapse frames
-		cmds.frameLayout(self.subcat_comments_frame_layout, edit = True, collapse = False)
+
+		#cmds.frameLayout(self.subcat_comments_frame_layout, edit = True, collapse = False)
+		
 		# self.maintain_default_comment_visibility()
 
 		# if self.autocomplete:
